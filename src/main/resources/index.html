@@ -37,8 +37,8 @@
                 $scope.createResponse = null;
                 $scope.listenStatus =false;
                 $scope.serverStatus = null;
-		$scope.keyAnswer = null;
-		$scope.iskeyAnswer = null;
+                $scope.keyAnswer = "";
+                $scope.iskeyAnswer = null;
                 
                 $scope.loadFlavors = function() {
                     $http.get('http://localhost:8181/OpenStackAdapter/v1/listFlavors').success(function(data){
@@ -70,10 +70,16 @@
 			//keypair create
                     $http.post('http://localhost:8181/OpenStackAdapter/v1/createKeyPair',$scope.keyName , config)
 			.then(function(response) {
-					$scope.keyAnswer=response.data;
+                    $scope.keyAnswer=response.data;
 				},
 				function(response) {
-					$scope.keyAnswer=response.data;
+
+                    if (response.data.indexOf("Missing key pair api") > -1){
+                        $scope.keyAnswer = "Key exists";
+                    }
+                    else {
+                        $scope.keyAnswer = response.data;
+                    }
 				});
 		    $scope.iskeyAnswer = true;
                     $http.post('http://localhost:8181/OpenStackAdapter/v1/createVM', data, config)
